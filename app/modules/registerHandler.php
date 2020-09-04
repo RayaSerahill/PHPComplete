@@ -2,8 +2,6 @@
 
 namespace App;
 
-use App\SQLiteUtils;
-
 class registerHandler {
 	private $pdo;
 	
@@ -19,7 +17,9 @@ class registerHandler {
 		if (!$this->name_validation($name)) {$list["success"] = "false"; $list[] = "Username must include at least 1 letter and be 3-15 characters long";}
 		$pass = $this->passwd_validation($password, $password_again);
 		if ($pass !== true) {$list["success"] = "false";foreach ($pass as $error) {$list[] = $error;}}
-		if (!array_key_exists("success", $list)) {$list["success"] = "true"; (new SQLiteUtils($this->pdo))->addUser($email, $name, $password);}
+		$res = (new SQLiteUtils($this->pdo))->isUnique($email, $name);
+		if ($res !== true){foreach ($res as $error) {$list["success"] = "false";$list[] = $error;}}
+		if (!array_key_exists("success", $list)) {$list["success"] = "true"; $password = hash_hmac("sha256", $password, Config::PEPPER); $password = password_hash($password, PASSWORD_BCRYPT, array('cost'=>12)); (new SQLiteUtils($this->pdo))->addUser($email, $name, $password);}
 		return $list;
 	}
 	

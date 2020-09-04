@@ -25,6 +25,13 @@ class SQLiteUtils {
 	}
 	
 	public function isUnique($mail, $username) {
-		return true;
+		$mail_sql = $this->pdo->prepare('SELECT count(*) FROM users WHERE mail = :mail');
+		$name_sql = $this->pdo->prepare('SELECT count(*) FROM users WHERE name = :name');
+		$mail_sql->execute([':mail' => $mail]);
+		$name_sql->execute([':name' => $username]);
+		$list = array();
+		if ($mail_sql->fetchColumn() > 0) {$list[] = "That email address is already in use";}
+		if ($name_sql->fetchColumn() > 0) {$list[] = "That username is not available";}
+		if ($list) {return $list;} else {return true;}
 	}
 }
