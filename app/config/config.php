@@ -3,5 +3,6 @@
 namespace App;
 
 class Config {
-	const PATH_TO_SQLITE_FILE = '../sqlite.db';
+	const PATH_TO_SQLITE_FILE = 'DATABASE_LOCATION_HERE';
+	const PEPPER = 'ENTER A RANDOM STRING (PASSWORD) HERE FOR MORE SECURITY';
 }
