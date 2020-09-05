@@ -19,7 +19,12 @@ class registerHandler {
 		if ($pass !== true) {$list["success"] = "false";foreach ($pass as $error) {$list[] = $error;}}
 		$res = (new SQLiteUtils($this->pdo))->isUnique($email, $name);
 		if ($res !== true){foreach ($res as $error) {$list["success"] = "false";$list[] = $error;}}
-		if (!array_key_exists("success", $list)) {$list["success"] = "true"; $password = hash_hmac("sha256", $password, Config::PEPPER); $password = password_hash($password, PASSWORD_BCRYPT, array('cost'=>12)); (new SQLiteUtils($this->pdo))->addUser($email, $name, $password);}
+		if (!array_key_exists("success", $list)) {
+			$list["success"] = "true";
+			$password = hash_hmac("sha256", $password, Config::PEPPER);
+			$password = password_hash($password, PASSWORD_ARGON2ID);
+			(new SQLiteUtils($this->pdo))->addUser($email, $name, $password);
+		}
 		return $list;
 	}
 	
