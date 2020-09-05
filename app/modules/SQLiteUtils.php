@@ -18,6 +18,7 @@ class SQLiteUtils {
 	}
 	
 	public function addUser($mail, $name, $passwd) {
+//		$passwd = (new generalUtils())->passwdGen($passwd);
 		$sql = 'INSERT INTO users(mail, name, passwd) VALUES(:mail, :name, :passwd)';
 		$stmt = $this->pdo->prepare($sql);
 		$stmt->execute([':mail' => $mail,':name' => $name,':passwd' => $passwd,]);
@@ -33,5 +34,19 @@ class SQLiteUtils {
 		if ($mail_sql->fetchColumn() > 0) {$list[] = "That email address is already in use";}
 		if ($name_sql->fetchColumn() > 0) {$list[] = "That username is not available";}
 		if ($list) {return $list;} else {return true;}
+	}
+	
+	public function loginAuth($mail, $passwd) {
+		$sql = $this->pdo->prepare('SELECT id, mail, passwd FROM users WHERE mail = :mail');
+		$sql->execute([':mail' => $mail]);
+		$passwd = hash_hmac("sha256", $passwd, Config::PEPPER);
+		if ($data = $sql->fetch()) {
+			if (password_verify($passwd, '' . $data["passwd"] . '')) {
+				return $data["id"];
+			} else {
+				return false;
+			}
+		}
+		return "The email you've entered doesn't match any account.";
 	}
 }
