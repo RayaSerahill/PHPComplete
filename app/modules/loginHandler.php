@@ -54,6 +54,7 @@ class loginHandler {
 		$list = array();
 		$res = (new SQLiteUtils($this->pdo))->loginAuth($mail, $passwd);
 		if (!$res) {$list["success"] = "false";$list[] = "Password incorrect";}
+		else if ($res === "The email you've entered doesn't match any account.") {$list["success"] = "false";$list[] = $res;}
 		else {$_SESSION["id"] = $res;$list["success"] = "true";}
 		if ($list["success"] === "true" && $rme === true) {
 			$token = $this->generateToken();
@@ -66,6 +67,7 @@ class loginHandler {
 			$stmt->execute([':selector' => $token,':token' => $valid,':userid' => $rme,':expires' => $time,]);
 			return true;
 		}
+		if ($list["success"] === "true") { return true; }
 		return $list;
 	}
 

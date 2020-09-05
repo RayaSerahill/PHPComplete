@@ -24,6 +24,7 @@ class registerHandler {
 			$password = hash_hmac("sha256", $password, Config::PEPPER);
 			$password = password_hash($password, PASSWORD_ARGON2ID);
 			(new SQLiteUtils($this->pdo))->addUser($email, $name, $password);
+			return true;
 		}
 		return $list;
 	}
