@@ -10,7 +10,8 @@ class SQLiteUtils {
 	}
 	
 	public function createTables() {
-		$commands = ['CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, mail TEXT NOT NULL, name TEXT NOT NULL, passwd TEXT NOT NULL)'];
+		$commands = ['CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, mail TEXT NOT NULL, name TEXT NOT NULL, passwd TEXT NOT NULL)',
+			'CREATE TABLE IF NOT EXISTS auth_tokens (id INTEGER PRIMARY KEY AUTOINCREMENT, selector TEXT, validator TEXT, userid INTEGER UNSIGNED NOT NULL, expires INTEGER)'];
 		foreach ($commands as $command) {
 			$this->pdo->exec($command);
 		}
