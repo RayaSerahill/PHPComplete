@@ -6,9 +6,30 @@ This is a repository where I store my PHP modules that I frequently use on other
  - **Register** - All in one Registration script to securely add new users
  
 ## Usage
-Login & Register modules return an array that signals whether the operation failed or succeeded. This array will also return all errors in the event of failure.
 
-Examples:
+
+### Database
+
+#### connection
+```
+$pdo = (new SQLiteConnection())->connect();
+```
+This function will return a PDO database connection that you will need to use the other functions.
+
+#### setup
+```
+(new SQLiteUtils($pdo))->createTables();
+```
+This function will create all necessary tables and events for the rest of the functions to work.
+
+### Registration / Login
+```
+(new registerHandler($pdo))->newUser(string $email, string $username, string $password);
+(new loginHandler($pdo))->login(string $email, string $password, bool $rememberme);
+```
+If everything goes well these functions will return Boolean ``True``.
+In case of errors you will get an array listing all errors.
+example:
 ```
 Array
 (
@@ -22,23 +43,21 @@ Array
     [6] => Passwords don't match
 )
 ```
+
+**Login** will also set ``$_SESSION["id"]`` to the user's id. This is how these scripts recognize a logged in user.
+
+
+### Remember me
 ```
-Array
-(
-    [success] => false
-    [0] => That email address is already in use
-    [1] => That username is not available
-)
+(new loginHandler($pdo))->rememberMe();
 ```
-```
-Array
-(
-    [success] => true
-)
-```
+This function will check if visitor has a "remember me" cookie and validate it against the database so that remember me can function.
+
+This will return a Boolean ``true`` is user gets logged in using this function and a boolean ``false`` when that doesn't happen.
+
 
 ## Planned modules/features
- - **Login** - Adding remember me functionality
  - **Register** - Adding email confirmation support
+ - **Password reset** - Basic ability to change password in case user forgets it.
  - **User management** - Basic api to elevate/delete/edit/list all users
  
