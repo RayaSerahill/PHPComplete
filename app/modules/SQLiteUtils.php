@@ -19,7 +19,6 @@ class SQLiteUtils {
 	}
 	
 	public function addUser($mail, $name, $passwd) {
-//		$passwd = (new generalUtils())->passwdGen($passwd);
 		$sql = 'INSERT INTO users(mail, name, passwd) VALUES(:mail, :name, :passwd)';
 		$stmt = $this->pdo->prepare($sql);
 		$stmt->execute([':mail' => $mail,':name' => $name,':passwd' => $passwd,]);
